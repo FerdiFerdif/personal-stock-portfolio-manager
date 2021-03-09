@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "408624288147",
+    "project_id": "personalstockportfoliomanager",
+    "storage_bucket": "personalstockportfoliomanager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408624288147:android:e3edecc517f09dfb215866",
+        "android_client_info": {
+          "package_name": "com.example.stockportfoliomanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408624288147-bm846jvs2jhnpto9ve5g4jtvqg0j4kdc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stockportfoliomanager",
+            "certificate_hash": "c4cf6f383e4a098bf1d441d5aafe6de07b7f236c"
+          }
+        },
+        {
+          "client_id": "408624288147-6k350npps170b3psjungiv0ekpj47elm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJrg3HGTEIYt0wocHkP2nBwbOCCWMgtyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408624288147-6k350npps170b3psjungiv0ekpj47elm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
