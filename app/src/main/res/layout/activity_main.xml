@@ -11,7 +11,7 @@
         android:id="@+id/logoutButton"
         android:layout_width="320dp"
         android:layout_height="50dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="48dp"
         android:text="LOGOUT"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
@@ -47,6 +47,20 @@
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsButton" />
+
+    <Button
+        android:id="@+id/portfolioButton"
+        android:layout_width="159dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="4dp"
+        android:text="PORTFOLIO"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userIdEmail" />
 
     <TextView
         android:id="@+id/textView2"
@@ -120,4 +134,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

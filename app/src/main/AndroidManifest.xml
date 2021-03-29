@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StockPortfolioManager">
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".PortfolioActivity"></activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />

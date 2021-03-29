@@ -1,7 +1,6 @@
 package com.example.stockportfoliomanager
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -24,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     var db = FirebaseFirestore.getInstance()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,22 +42,19 @@ class MainActivity : AppCompatActivity() {
 
         Picasso.get().load(auth.currentUser.photoUrl).into(imageProfile)
 
-        title = "KotlinApp"
         handler = Handler()
         runnable = Runnable {
 
-
             Toast.makeText(
-                this@MainActivity,
-                "Logged out for inactivity",
-                Toast.LENGTH_SHORT
+                    this@MainActivity,
+                    "Logged out for inactivity",
+                    Toast.LENGTH_SHORT
             ).show()
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
         }
         startTimer()
-
 
         val userId = intent.getStringExtra("user_id")
         val emailId = intent.getStringExtra("email_id")
@@ -68,11 +63,14 @@ class MainActivity : AppCompatActivity() {
         userIdEmail.text = "Email : $emailId"
 
         logoutButton.setOnClickListener {
-
             FirebaseAuth.getInstance().signOut()
 
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
+        }
+
+        portfolioButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, PortfolioActivity::class.java))
         }
 
         settingsButton.setOnClickListener {
@@ -80,31 +78,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         testButton.setOnClickListener {
-
             when {
                 TextUtils.isEmpty(log_string.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                        this@MainActivity,
-                        "Please enter a value",
-                        Toast.LENGTH_SHORT
+                            this@MainActivity,
+                            "Please enter a value",
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
                 else -> {
-
                     val user: MutableMap<String, Any> = HashMap()
                     user["dataString"] = log_string.text.toString()
 
-                    // Add a new document with a generated ID
                     db.collection("users").document("$userId")
-                        .set(user, SetOptions.merge())
-                        .addOnSuccessListener {
-                            Toast.makeText(this@MainActivity, "Successfully updated data.", Toast.LENGTH_LONG).show()
-                            savedString.text = log_string.text.toString()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this@MainActivity, "Failed to update data.", Toast.LENGTH_LONG).show()
-
-                        }
+                            .set(user, SetOptions.merge())
+                            .addOnSuccessListener {
+                                Toast.makeText(this@MainActivity, "Successfully updated data.", Toast.LENGTH_LONG).show()
+                                savedString.text = log_string.text.toString()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this@MainActivity, "Failed to update data.", Toast.LENGTH_LONG).show()
+                            }
                 }
             }
         }
