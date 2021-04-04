@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,6 +16,7 @@ import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_portfolio.*
 import kotlinx.android.synthetic.main.activity_register.*
+import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -30,88 +33,61 @@ class PortfolioActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         var userId = auth.currentUser.uid
         db.collection("users").document("$userId").collection("stocks")
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        if (document != null) {
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    if (document != null) {
 
-                            var shareNameData = document.getString("shareName")
-                            var shareNoData = document.getString("shareNo")
-                            var sharePriceData = document.getString("sharePrice")
+                        var documentPath = document.id
 
-                            val tl = findViewById<View>(tableLayout.id) as TableLayout
-                            val tr = TableRow(this)
+                        var shareNameData = document.getString("shareName")
+                        var shareNoData = document.getString("shareNo")
+                        var sharePriceData = document.getString("sharePrice")
 
-                            val stockText = TextView(this)
-                            stockText.setText("$shareNameData")
-                            stockText.setTextColor(Color.parseColor("#DAA03F"))
-                            stockText.setGravity(Gravity.CENTER_HORIZONTAL)
-                            stockText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
-                            stockText.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                            tr.addView(stockText)
-
-                            var shareNumber = TextView(this)
-                            shareNumber.setText("$shareNoData")
-                            shareNumber.setTextColor(Color.parseColor("#DAA03F"))
-                            shareNumber.setGravity(Gravity.CENTER_HORIZONTAL)
-                            shareNumber.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                            tr.addView(shareNumber)
-
-                            var sharePrice = TextView(this)
-                            sharePrice.setText("$ $sharePriceData")
-                            sharePrice.setTextColor(Color.parseColor("#DAA03F"))
-                            sharePrice.setGravity(Gravity.CENTER_HORIZONTAL)
-                            sharePrice.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                            tr.addView(sharePrice)
-
-                            var currentPrice = TextView(this)
-                            currentPrice.setText("N/A")
-                            currentPrice.setTextColor(Color.parseColor("#DAA03F"))
-                            currentPrice.setGravity(Gravity.CENTER_HORIZONTAL)
-                            currentPrice.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                            tr.addView(currentPrice)
-
-                            var currentReturn = TextView(this)
-                            currentReturn.setText("N/A")
-                            currentReturn.setTextColor(Color.parseColor("#DAA03F"))
-                            currentReturn.setGravity(Gravity.CENTER_HORIZONTAL)
-                            currentReturn.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                            tr.addView(currentReturn)
-
-                            tl.addView(tr, TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT))
-
+                        if (shareNameData != null) {
+                            if (shareNoData != null) {
+                                if (sharePriceData != null) {
+                                    addStockTab(documentPath, shareNameData, shareNoData, sharePriceData)
+                                }
+                            }
                         }
+
                     }
                 }
+            }
 
-                .addOnFailureListener {
-                    Toast.makeText(this@PortfolioActivity, "Failed to load data.", Toast.LENGTH_LONG).show()
-                }
+            .addOnFailureListener {
+                Toast.makeText(
+                    this@PortfolioActivity,
+                    "Failed to load data.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
 
-        addPortfolioButton.setOnClickListener{
+        addPortfolioButton.setOnClickListener {
 
             when {
                 TextUtils.isEmpty(stockNameField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                            this@PortfolioActivity,
-                            "Please enter the Stock Name",
-                            Toast.LENGTH_SHORT
+                        this@PortfolioActivity,
+                        "Please enter the Stock Name",
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 TextUtils.isEmpty(sharesNumberField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                            this@PortfolioActivity,
-                            "Please enter the number of Shares ",
-                            Toast.LENGTH_SHORT
+                        this@PortfolioActivity,
+                        "Please enter the number of Shares ",
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 TextUtils.isEmpty(priceNumberField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                            this@PortfolioActivity,
-                            "Please enter a Price",
-                            Toast.LENGTH_SHORT
+                        this@PortfolioActivity,
+                        "Please enter a Price",
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -124,63 +100,204 @@ class PortfolioActivity : AppCompatActivity() {
 
                     var uniqueID = UUID.randomUUID().toString()
                     db.collection("users").document("$userId")
-                            .collection("stocks").document("$uniqueID")
-                            .set(user, SetOptions.merge())
-                            .addOnSuccessListener {
-                                Toast.makeText(this@PortfolioActivity, "Successfully updated data.", Toast.LENGTH_LONG).show()
-                                val tl = findViewById<View>(tableLayout.id) as TableLayout
-                                val tr = TableRow(this)
+                        .collection("stocks").document("$uniqueID")
+                        .set(user, SetOptions.merge())
+                        .addOnSuccessListener {
+                            addStockTab(uniqueID, stockNameField.text.toString(), sharesNumberField.text.toString(), priceNumberField.text.toString())
+                            UIUtil.hideKeyboard(this)
+                            Toast.makeText(
+                                this@PortfolioActivity,
+                                "Successfully updated data.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+            }
+        }
+    }
 
-                                val stockText = TextView(this)
-                                stockText.setText(stockNameField.text.toString())
-                                stockText.setTextColor(Color.parseColor("#DAA03F"))
-                                stockText.setGravity(Gravity.CENTER_HORIZONTAL)
-                                stockText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
-                                stockText.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                                tr.addView(stockText)
+    private fun addStockTab(uniqueID: String, shareName: String, shareAmount: String, sharePrice: String) {
 
-                                var shareNumber = TextView(this)
-                                shareNumber.setText(sharesNumberField.text.toString())
-                                shareNumber.setTextColor(Color.parseColor("#DAA03F"))
-                                shareNumber.setGravity(Gravity.CENTER_HORIZONTAL)
-                                shareNumber.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                                tr.addView(shareNumber)
+        val userId = auth.currentUser.uid
 
-                                var sharepriceNo = priceNumberField.text.toString()
+        val tablelayout = findViewById<View>(tableLayout.id) as TableLayout
+        val tablerow = TableRow(this)
 
-                                var sharePrice = TextView(this)
-                                sharePrice.setText("$ $sharepriceNo")
-                                sharePrice.setTextColor(Color.parseColor("#DAA03F"))
-                                sharePrice.setGravity(Gravity.CENTER_HORIZONTAL)
-                                sharePrice.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                                tr.addView(sharePrice)
+        val stockText = TextView(this)
+        stockText.text = "$shareName"
+        stockText.setTextColor(Color.parseColor("#DAA03F"))
+        stockText.gravity = Gravity.CENTER_HORIZONTAL
+        stockText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+        stockText.layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.FILL_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT
+        )
+        tablerow.addView(stockText)
 
-                                var currentPrice = TextView(this)
-                                currentPrice.setText("N/A")
-                                currentPrice.setTextColor(Color.parseColor("#DAA03F"))
-                                currentPrice.setGravity(Gravity.CENTER_HORIZONTAL)
-                                currentPrice.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                                tr.addView(currentPrice)
+        var shareNumberText = TextView(this)
+        shareNumberText.text = "$shareAmount"
+        shareNumberText.setTextColor(Color.parseColor("#DAA03F"))
+        shareNumberText.gravity = Gravity.CENTER_HORIZONTAL
+        shareNumberText.layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.FILL_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT
+        )
+        tablerow.addView(shareNumberText)
 
-                                var currentReturn = TextView(this)
-                                currentReturn.setText("N/A")
-                                currentReturn.setTextColor(Color.parseColor("#DAA03F"))
-                                currentReturn.setGravity(Gravity.CENTER_HORIZONTAL)
-                                currentReturn.setLayoutParams(TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT))
-                                tr.addView(currentReturn)
+        var sharePriceText = TextView(this)
+        sharePriceText.text = "$ $sharePrice"
+        sharePriceText.setTextColor(Color.parseColor("#DAA03F"))
+        sharePriceText.gravity = Gravity.CENTER_HORIZONTAL
+        sharePriceText.layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.FILL_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT
+        )
+        tablerow.addView(sharePriceText)
 
-                                tl.addView(tr, TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT))
+        var currentPriceText = TextView(this)
+        currentPriceText.text = "N/A"
+        currentPriceText.setTextColor(Color.parseColor("#DAA03F"))
+        currentPriceText.gravity = Gravity.CENTER_HORIZONTAL
+        currentPriceText.layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.FILL_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT
+        )
+        tablerow.addView(currentPriceText)
 
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this@PortfolioActivity, "Failed to update data.", Toast.LENGTH_LONG).show()
-                            }
+        var currentReturnText = TextView(this)
+        currentReturnText.text = "N/A"
+        currentReturnText.setTextColor(Color.parseColor("#DAA03F"))
+        currentReturnText.gravity = Gravity.CENTER_HORIZONTAL
+        currentReturnText.layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.FILL_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT
+        )
+        tablerow.addView(currentReturnText)
 
+        tablerow.setOnClickListener {
+            val popup = PopupMenu(this, tablerow)
+            popup.inflate(R.menu.config_entry)
+            popup.setOnMenuItemClickListener {
+
+
+                if (it.title == "Delete") {
+                    db.collection("users").document("$userId")
+                        .collection("stocks").document("$uniqueID")
+                        .delete()
+                        .addOnSuccessListener {
+                            tablelayout.removeView(tablerow)
+                            Toast.makeText(
+                                this@PortfolioActivity,
+                                "Successfully deleted.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(
+                                this@PortfolioActivity,
+                                "Error: $e",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                 }
 
-            }
+                if (it.title == "Edit") {
+                    val dialogBuilder = AlertDialog.Builder(this)
 
+                    val layoutInflater: LayoutInflater = LayoutInflater.from(applicationContext)
+                    val view: View = layoutInflater.inflate(R.layout.config_stock, portfolioRoot, false)
+
+                    dialogBuilder.setView(view)
+                    val dialog = dialogBuilder.create()
+
+                    val newStockName = view.findViewById<TextView>(R.id.stockNameConfig)
+                    val newStockAmount = view.findViewById<TextView>(R.id.stockAmountConfig)
+                    val newStockPrice = view.findViewById<TextView>(R.id.stockPriceConfig)
+
+                    val newApplyButton = view.findViewById<Button>(R.id.applyButtonConfig)
+
+                    newApplyButton.setOnClickListener {
+                        when {
+                            TextUtils.isEmpty(
+                                newStockName.text.toString()
+                                    .trim { it <= ' ' }) -> {
+                                Toast.makeText(
+                                    this@PortfolioActivity,
+                                    "Please enter the Stock Name",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            TextUtils.isEmpty(
+                                newStockAmount.text.toString()
+                                    .trim { it <= ' ' }) -> {
+                                Toast.makeText(
+                                    this@PortfolioActivity,
+                                    "Please enter the number of Shares ",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            TextUtils.isEmpty(
+                                newStockPrice.text.toString()
+                                    .trim { it <= ' ' }) -> {
+                                Toast.makeText(
+                                    this@PortfolioActivity,
+                                    "Please enter a Price",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            else -> {
+
+                                val user: MutableMap<String, Any> = HashMap()
+                                user["shareName"] = newStockName.text.toString()
+                                user["shareNo"] = newStockAmount.text.toString()
+                                user["sharePrice"] = newStockPrice.text.toString()
+
+                                db.collection("users").document("$userId")
+                                    .collection("stocks").document("$uniqueID")
+                                    .set(user)
+                                    .addOnSuccessListener {
+                                        tablelayout.removeView(tablerow)
+
+                                        addStockTab(uniqueID, newStockName.text.toString(), newStockAmount.text.toString(), newStockPrice.text.toString())
+                                        UIUtil.hideKeyboard(this)
+                                        dialog.dismiss()
+
+                                        Toast.makeText(
+                                            this@PortfolioActivity,
+                                            "Successfully edited.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(
+                                            this@PortfolioActivity,
+                                            "Error: $e",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                            }
+                        }
+                    }
+
+                    dialog.show()
+                }
+                true
+            }
+            popup.show()
         }
 
+        tablelayout.addView(
+            tablerow, TableLayout.LayoutParams(
+                TableLayout.LayoutParams.FILL_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+        )
+
     }
+
 }

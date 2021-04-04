@@ -10,19 +10,17 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
 
-//VOOR BEROEPSEXAMEN FERDI VAN DEN BROM | 2079865
-
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         registerButton.setOnClickListener {
-
             startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
         }
 
         loginAccountButton.setOnClickListener {
+
             when {
                 TextUtils.isEmpty(login_email.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
@@ -39,6 +37,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                     ).show()
                 }
+
                 else -> {
 
                     val email: String = login_email.text.toString().trim { it <= ' ' }
@@ -76,6 +75,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 }

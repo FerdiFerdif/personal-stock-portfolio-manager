@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/portfolioRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSecondary"
@@ -13,155 +14,162 @@
         android:id="@+id/stockNameField"
         android:layout_width="240dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Stock Name"
         android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/sharesNumberField"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        tools:layout_editor_absoluteX="121dp" />
 
     <EditText
         android:id="@+id/sharesNumberField"
         android:layout_width="240dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Shares"
-        android:inputType="number"
+        android:inputType="none|numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/priceNumberField"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stockNameField" />
+        tools:layout_editor_absoluteX="121dp" />
 
     <EditText
         android:id="@+id/priceNumberField"
         android:layout_width="240dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Price"
-        android:inputType="none|number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sharesNumberField" />
-
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="381dp"
-        android:layout_height="296dp"
-        android:layout_marginTop="24dp"
+        android:inputType="none|numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/addPortfolioButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        tools:layout_editor_absoluteX="121dp" />
 
-        <TableRow
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0">
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="376dp"
+        android:layout_height="269dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/textView24"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@color/colorPrimaryVariant"
-                android:text="Stock"
-                android:textAlignment="center"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="376dp"
+            android:layout_height="269dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4">
 
-            <TextView
-                android:id="@+id/textView23"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@color/colorPrimaryVariant"
-                android:text="Shares"
-                android:textAlignment="center"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+            <TableRow
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0">
 
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@color/colorPrimaryVariant"
-                android:text="Purchase Price"
-                android:textAlignment="center"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/colorPrimaryVariant"
+                    android:text="Stock"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView27"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@color/colorPrimaryVariant"
-                android:text="Current Price"
-                android:textAlignment="center"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/colorPrimaryVariant"
+                    android:text="Shares"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@color/colorPrimaryVariant"
-                android:text="Return"
-                android:textAlignment="center"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textView21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/colorPrimaryVariant"
+                    android:text="Purchase Price"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
-        </TableRow>
+                <TextView
+                    android:id="@+id/textView27"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/colorPrimaryVariant"
+                    android:text="Current Price"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/colorPrimaryVariant"
+                    android:text="Return"
+                    android:textAlignment="center"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
-    </TableLayout>
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="391dp"
         android:layout_height="46dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginBottom="24dp"
         android:text="Portfolio"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textSize="40dp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="391dp"
         android:layout_height="46dp"
-        android:layout_marginTop="8dp"
         android:text="Add Stock"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textSize="32dp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/stockNameField"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+        tools:layout_editor_absoluteX="45dp" />
 
     <Button
         android:id="@+id/addPortfolioButton"
         android:layout_width="174dp"
         android:layout_height="56dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="88dp"
         android:text="ADD"
         android:textColor="@color/colorSecondary"
         android:textSize="18dp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/priceNumberField" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

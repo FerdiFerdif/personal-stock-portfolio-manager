@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="50dp">
+
+    <EditText
+        android:id="@+id/stockNameConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stock Name"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/stockAmountConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stock Amount"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stockNameConfig" />
+
+    <EditText
+        android:id="@+id/stockPriceConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stock Price"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stockAmountConfig" />
+
+    <Button
+        android:id="@+id/applyButtonConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        app:layout_constraintTop_toBottomOf="@+id/stockPriceConfig" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

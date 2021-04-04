@@ -22,7 +22,6 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
         }
 
-
         registerAccountButton.setOnClickListener {
             when {
                 TextUtils.isEmpty(register_email.text.toString().trim {it <= ' '}) -> {
@@ -42,39 +41,37 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 else -> {
 
-                        val email: String = register_email.text.toString().trim { it <= ' '}
-                        val password: String = register_password.text.toString().trim { it <= ' '}
+                    val email: String = register_email.text.toString().trim { it <= ' '}
+                    val password: String = register_password.text.toString().trim { it <= ' '}
 
-                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
 
-                                        val firebaseUser: FirebaseUser = task.result!!.user!!
+                                    val firebaseUser: FirebaseUser = task.result!!.user!!
 
-                                        Toast.makeText(
-                                                this@RegisterActivity,
-                                                "Successfully registered",
-                                                Toast.LENGTH_SHORT
-                                        ).show()
+                                    Toast.makeText(
+                                            this@RegisterActivity,
+                                            "Successfully registered",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
 
-                                        val intent =
-                                                Intent(this@RegisterActivity, MainActivity::class.java)
-                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        intent.putExtra("user_id", firebaseUser.uid)
-                                        intent.putExtra("email_id", email)
-                                        startActivity(intent)
-                                        finish()
-                                    } else {
-                                        // Toast error message
-                                        Toast.makeText(
-                                                this@RegisterActivity,
-                                                task.exception!!.message.toString(),
-                                                Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                    val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    intent.putExtra("user_id", firebaseUser.uid)
+                                    intent.putExtra("email_id", email)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(
+                                            this@RegisterActivity,
+                                            task.exception!!.message.toString(),
+                                            Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                    }
+                            }
                 }
             }
         }
     }
+}

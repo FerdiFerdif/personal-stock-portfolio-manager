@@ -49,7 +49,6 @@ class SettingsActivity : AppCompatActivity() {
 
         uploadImageButton.setOnClickListener {
             if(selectedImageUri != null) {
-                val imageExtension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(selectedImageUri!!))
                 val serverRef = storageRef.child("${auth.currentUser.uid}")
 
                 serverRef.putFile(selectedImageUri!!)
