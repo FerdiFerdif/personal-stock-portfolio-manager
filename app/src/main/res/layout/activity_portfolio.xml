@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".25"
                     android:background="@color/colorPrimaryVariant"
-                    android:text="Purchase Price"
+                    android:text="Purchase"
                     android:textAlignment="center"
                     android:textSize="16dp"
                     android:textStyle="bold" />
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".25"
                     android:background="@color/colorPrimaryVariant"
-                    android:text="Current Price"
+                    android:text="Close"
                     android:textAlignment="center"
                     android:textSize="16dp"
                     android:textStyle="bold" />
@@ -126,6 +126,7 @@
                     android:textStyle="bold" />
 
             </TableRow>
+
         </TableLayout>
     </ScrollView>
 

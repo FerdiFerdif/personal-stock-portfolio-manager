@@ -10,6 +10,10 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -17,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_portfolio.*
 import kotlinx.android.synthetic.main.activity_register.*
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
+import org.json.JSONException
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -27,67 +32,78 @@ class PortfolioActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     var db = FirebaseFirestore.getInstance()
 
+    private var mQueue: RequestQueue? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_portfolio)
         auth = FirebaseAuth.getInstance()
         var userId = auth.currentUser.uid
+
+        mQueue = Volley.newRequestQueue(this)
+
         db.collection("users").document("$userId").collection("stocks")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    if (document != null) {
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        if (document != null) {
 
-                        var documentPath = document.id
+                            var documentPath = document.id
 
-                        var shareNameData = document.getString("shareName")
-                        var shareNoData = document.getString("shareNo")
-                        var sharePriceData = document.getString("sharePrice")
+                            var shareNameData = document.getString("shareName")
+                            var shareNoData = document.getString("shareNo")
+                            var sharePriceData = document.getString("sharePrice")
 
-                        if (shareNameData != null) {
-                            if (shareNoData != null) {
-                                if (sharePriceData != null) {
-                                    addStockTab(documentPath, shareNameData, shareNoData, sharePriceData)
+                            if (shareNameData != null) {
+                                if (shareNoData != null) {
+                                    if (sharePriceData != null) {
+                                        addStockTab(
+                                                documentPath,
+                                                shareNameData,
+                                                shareNoData,
+                                                sharePriceData
+                                        )
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
-            }
 
-            .addOnFailureListener {
-                Toast.makeText(
-                    this@PortfolioActivity,
-                    "Failed to load data.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+                .addOnFailureListener {
+                    Toast.makeText(
+                            this@PortfolioActivity,
+                            "Failed to load data.",
+                            Toast.LENGTH_LONG
+                    ).show()
+                }
 
         addPortfolioButton.setOnClickListener {
 
             when {
                 TextUtils.isEmpty(stockNameField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                        this@PortfolioActivity,
-                        "Please enter the Stock Name",
-                        Toast.LENGTH_SHORT
+                            this@PortfolioActivity,
+                            "Please enter the Stock Name",
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 TextUtils.isEmpty(sharesNumberField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                        this@PortfolioActivity,
-                        "Please enter the number of Shares ",
-                        Toast.LENGTH_SHORT
+                            this@PortfolioActivity,
+                            "Please enter the number of Shares ",
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 TextUtils.isEmpty(priceNumberField.text.toString().trim { it <= ' ' }) -> {
                     Toast.makeText(
-                        this@PortfolioActivity,
-                        "Please enter a Price",
-                        Toast.LENGTH_SHORT
+                            this@PortfolioActivity,
+                            "Please enter a Price",
+                            Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -100,23 +116,33 @@ class PortfolioActivity : AppCompatActivity() {
 
                     var uniqueID = UUID.randomUUID().toString()
                     db.collection("users").document("$userId")
-                        .collection("stocks").document("$uniqueID")
-                        .set(user, SetOptions.merge())
-                        .addOnSuccessListener {
-                            addStockTab(uniqueID, stockNameField.text.toString(), sharesNumberField.text.toString(), priceNumberField.text.toString())
-                            UIUtil.hideKeyboard(this)
-                            Toast.makeText(
-                                this@PortfolioActivity,
-                                "Successfully updated data.",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                            .collection("stocks").document("$uniqueID")
+                            .set(user, SetOptions.merge())
+                            .addOnSuccessListener {
+                                addStockTab(
+                                        uniqueID,
+                                        stockNameField.text.toString(),
+                                        sharesNumberField.text.toString(),
+                                        priceNumberField.text.toString()
+                                )
+                                UIUtil.hideKeyboard(this)
+                                Toast.makeText(
+                                        this@PortfolioActivity,
+                                        "Successfully updated data.",
+                                        Toast.LENGTH_LONG
+                                ).show()
+                            }
                 }
             }
         }
     }
 
-    private fun addStockTab(uniqueID: String, shareName: String, shareAmount: String, sharePrice: String) {
+    private fun addStockTab(
+            uniqueID: String,
+            shareName: String,
+            shareAmount: String,
+            sharePrice: String
+    ) {
 
         val userId = auth.currentUser.uid
 
@@ -129,8 +155,9 @@ class PortfolioActivity : AppCompatActivity() {
         stockText.gravity = Gravity.CENTER_HORIZONTAL
         stockText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
         stockText.layoutParams = TableRow.LayoutParams(
-            TableRow.LayoutParams.FILL_PARENT,
-            TableRow.LayoutParams.WRAP_CONTENT
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f
         )
         tablerow.addView(stockText)
 
@@ -139,8 +166,9 @@ class PortfolioActivity : AppCompatActivity() {
         shareNumberText.setTextColor(Color.parseColor("#DAA03F"))
         shareNumberText.gravity = Gravity.CENTER_HORIZONTAL
         shareNumberText.layoutParams = TableRow.LayoutParams(
-            TableRow.LayoutParams.FILL_PARENT,
-            TableRow.LayoutParams.WRAP_CONTENT
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f
         )
         tablerow.addView(shareNumberText)
 
@@ -148,9 +176,11 @@ class PortfolioActivity : AppCompatActivity() {
         sharePriceText.text = "$ $sharePrice"
         sharePriceText.setTextColor(Color.parseColor("#DAA03F"))
         sharePriceText.gravity = Gravity.CENTER_HORIZONTAL
+
         sharePriceText.layoutParams = TableRow.LayoutParams(
-            TableRow.LayoutParams.FILL_PARENT,
-            TableRow.LayoutParams.WRAP_CONTENT
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f
         )
         tablerow.addView(sharePriceText)
 
@@ -159,8 +189,9 @@ class PortfolioActivity : AppCompatActivity() {
         currentPriceText.setTextColor(Color.parseColor("#DAA03F"))
         currentPriceText.gravity = Gravity.CENTER_HORIZONTAL
         currentPriceText.layoutParams = TableRow.LayoutParams(
-            TableRow.LayoutParams.FILL_PARENT,
-            TableRow.LayoutParams.WRAP_CONTENT
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f
         )
         tablerow.addView(currentPriceText)
 
@@ -169,44 +200,77 @@ class PortfolioActivity : AppCompatActivity() {
         currentReturnText.setTextColor(Color.parseColor("#DAA03F"))
         currentReturnText.gravity = Gravity.CENTER_HORIZONTAL
         currentReturnText.layoutParams = TableRow.LayoutParams(
-            TableRow.LayoutParams.FILL_PARENT,
-            TableRow.LayoutParams.WRAP_CONTENT
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f
         )
         tablerow.addView(currentReturnText)
+
+        val url = "https://api.polygon.io/v2/aggs/ticker/$shareName/prev?unadjusted=true&apiKey=QJZbPVrmp_uKVrgH0x8aNsBtBg5dWz6X"
+
+        val request = JsonObjectRequest(Request.Method.GET, url, null,
+                { response ->
+                    try {
+                        response
+                        var resultsArray =  response.getJSONArray("results").getJSONObject(0)
+                        var price = resultsArray.getString("c")
+                        var currentPriceStock = price
+                        currentPriceText.text = "$ $price"
+                        var calcShare = shareAmount.toFloat()
+                        var calcPurchasePrice = sharePrice.toFloat()
+                        var calcCurrentPrice = currentPriceStock.toFloat()
+                        val returnAmount = (calcShare*calcCurrentPrice -calcShare*calcPurchasePrice)
+
+                        currentReturnText.text = String.format("$ %.2f", returnAmount)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        Toast.makeText(
+                                this@PortfolioActivity,
+                                "$e",
+                                Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+        ) { error -> error.printStackTrace() }
+
+        mQueue!!.add(request)
 
         tablerow.setOnClickListener {
             val popup = PopupMenu(this, tablerow)
             popup.inflate(R.menu.config_entry)
             popup.setOnMenuItemClickListener {
 
-
                 if (it.title == "Delete") {
                     db.collection("users").document("$userId")
-                        .collection("stocks").document("$uniqueID")
-                        .delete()
-                        .addOnSuccessListener {
-                            tablelayout.removeView(tablerow)
-                            Toast.makeText(
-                                this@PortfolioActivity,
-                                "Successfully deleted.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            .collection("stocks").document("$uniqueID")
+                            .delete()
+                            .addOnSuccessListener {
+                                tablelayout.removeView(tablerow)
+                                Toast.makeText(
+                                        this@PortfolioActivity,
+                                        "Successfully deleted.",
+                                        Toast.LENGTH_SHORT
+                                ).show()
 
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(
-                                this@PortfolioActivity,
-                                "Error: $e",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                        this@PortfolioActivity,
+                                        "Error: $e",
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                            }
                 }
 
                 if (it.title == "Edit") {
                     val dialogBuilder = AlertDialog.Builder(this)
 
                     val layoutInflater: LayoutInflater = LayoutInflater.from(applicationContext)
-                    val view: View = layoutInflater.inflate(R.layout.config_stock, portfolioRoot, false)
+                    val view: View = layoutInflater.inflate(
+                            R.layout.config_stock,
+                            portfolioRoot,
+                            false
+                    )
 
                     dialogBuilder.setView(view)
                     val dialog = dialogBuilder.create()
@@ -220,32 +284,32 @@ class PortfolioActivity : AppCompatActivity() {
                     newApplyButton.setOnClickListener {
                         when {
                             TextUtils.isEmpty(
-                                newStockName.text.toString()
-                                    .trim { it <= ' ' }) -> {
+                                    newStockName.text.toString()
+                                            .trim { it <= ' ' }) -> {
                                 Toast.makeText(
-                                    this@PortfolioActivity,
-                                    "Please enter the Stock Name",
-                                    Toast.LENGTH_SHORT
+                                        this@PortfolioActivity,
+                                        "Please enter the Stock Name",
+                                        Toast.LENGTH_SHORT
                                 ).show()
                             }
 
                             TextUtils.isEmpty(
-                                newStockAmount.text.toString()
-                                    .trim { it <= ' ' }) -> {
+                                    newStockAmount.text.toString()
+                                            .trim { it <= ' ' }) -> {
                                 Toast.makeText(
-                                    this@PortfolioActivity,
-                                    "Please enter the number of Shares ",
-                                    Toast.LENGTH_SHORT
+                                        this@PortfolioActivity,
+                                        "Please enter the number of Shares ",
+                                        Toast.LENGTH_SHORT
                                 ).show()
                             }
 
                             TextUtils.isEmpty(
-                                newStockPrice.text.toString()
-                                    .trim { it <= ' ' }) -> {
+                                    newStockPrice.text.toString()
+                                            .trim { it <= ' ' }) -> {
                                 Toast.makeText(
-                                    this@PortfolioActivity,
-                                    "Please enter a Price",
-                                    Toast.LENGTH_SHORT
+                                        this@PortfolioActivity,
+                                        "Please enter a Price",
+                                        Toast.LENGTH_SHORT
                                 ).show()
                             }
 
@@ -257,29 +321,34 @@ class PortfolioActivity : AppCompatActivity() {
                                 user["sharePrice"] = newStockPrice.text.toString()
 
                                 db.collection("users").document("$userId")
-                                    .collection("stocks").document("$uniqueID")
-                                    .set(user)
-                                    .addOnSuccessListener {
-                                        tablelayout.removeView(tablerow)
+                                        .collection("stocks").document("$uniqueID")
+                                        .set(user)
+                                        .addOnSuccessListener {
+                                            tablelayout.removeView(tablerow)
 
-                                        addStockTab(uniqueID, newStockName.text.toString(), newStockAmount.text.toString(), newStockPrice.text.toString())
-                                        UIUtil.hideKeyboard(this)
-                                        dialog.dismiss()
+                                            addStockTab(
+                                                    uniqueID,
+                                                    newStockName.text.toString(),
+                                                    newStockAmount.text.toString(),
+                                                    newStockPrice.text.toString()
+                                            )
+                                            UIUtil.hideKeyboard(this)
+                                            dialog.dismiss()
 
-                                        Toast.makeText(
-                                            this@PortfolioActivity,
-                                            "Successfully edited.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                            Toast.makeText(
+                                                    this@PortfolioActivity,
+                                                    "Successfully edited.",
+                                                    Toast.LENGTH_SHORT
+                                            ).show()
 
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Toast.makeText(
-                                            this@PortfolioActivity,
-                                            "Error: $e",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                    this@PortfolioActivity,
+                                                    "Error: $e",
+                                                    Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                             }
                         }
                     }
@@ -292,12 +361,11 @@ class PortfolioActivity : AppCompatActivity() {
         }
 
         tablelayout.addView(
-            tablerow, TableLayout.LayoutParams(
+                tablerow, TableLayout.LayoutParams(
                 TableLayout.LayoutParams.FILL_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT
-            )
+        )
         )
 
     }
-
 }
