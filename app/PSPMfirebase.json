@@ -1,0 +1,79 @@
+{
+  "__collections__": {
+    "users": {
+      "O7qW75sZSjNQmPFG7oYoKfLTzCv1": {
+        "__collections__": {
+          "stocks": {
+            "00ccfb08-84b4-4ab6-a316-167889c2ff58": {
+              "shareName": "ASXC",
+              "sharePrice": "4",
+              "shareNo": "10",
+              "__collections__": {}
+            }
+          }
+        }
+      },
+      "POjASOEdqzbGveLoEt8WW14MLYT2": {
+        "__collections__": {
+          "stocks": {
+            "8f9a80a1-af7e-41cd-9dc7-981af1196d35": {
+              "sharePrice": "1",
+              "shareNo": "25",
+              "shareName": "JAGX",
+              "__collections__": {}
+            }
+          }
+        }
+      },
+      "com.google.firebase.auth.internal.zzv@6b64c83.currentUser.uid": {
+        "__collections__": {
+          "stocks": {
+            "75bd91eb-f528-40d5-9c55-3f8b1cf0066e": {
+              "shareName": "ASXC",
+              "sharePrice": "4",
+              "shareNo": "25",
+              "__collections__": {}
+            }
+          }
+        }
+      },
+      "rwXWlZXlZQdUlNEYXj44uh5pgIA3": {
+        "__collections__": {
+          "stocks": {
+            "3ebac6e9-88bc-4c49-ac4c-b7a807f552d3": {
+              "sharePrice": "1",
+              "shareName": "JAGX",
+              "shareNo": "10",
+              "__collections__": {}
+            },
+            "53c22ef5-d659-40e9-8948-501f189efbce": {
+              "shareName": "ASXC",
+              "shareNo": "30",
+              "sharePrice": "2",
+              "__collections__": {}
+            }
+          }
+        }
+      },
+      "xQBSscrKLuWJ5ly04tMXUSRfaGj2": {
+        "dataString": "eeee",
+        "__collections__": {
+          "stocks": {
+            "0ee7883a-97b1-458e-b37c-02b4e8200cf3": {
+              "shareName": "NAKD",
+              "shareNo": "8653.50",
+              "sharePrice": "0.7118",
+              "__collections__": {}
+            },
+            "7b8a6b89-aa35-4d33-ae81-7ca5af8453c4": {
+              "sharePrice": "4",
+              "shareNo": "20",
+              "shareName": "ASXC",
+              "__collections__": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
